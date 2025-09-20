@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Swiss Army Knife</title>
+<style>
+body { margin: 0; font-family: Arial, sans-serif; background: #111; color: #eee; }
+#menu { position: absolute; top: 0; left: 0; right: 0; background: #222; padding: 10px; display: flex; gap: 20px; }
+#menu button { padding: 10px 20px; background: #444; border: none; color: #fff; cursor: pointer; }
+#menu button:hover { background: #666; }
+#gameArea { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
+canvas { background: #000; display: block; }
+#map { display: none; width: 100%; height: 100%; background: #1a1a1a; color: #fff; padding: 20px; overflow: auto; }
+.canton { margin: 10px 0; padding: 10px; background: #333; cursor: pointer; }
+.canton:hover { background: #555; }
+#edu { display: none; width: 100%; height: 100%; background: #101010; padding: 20px; overflow: auto; }
+.edu-section { margin-bottom: 20px; padding: 15px; background: #222; }
+</style>
+</head>
+<body>
+<div id="menu">
+<button onclick="showFPS()">Play FPS</button>
+<button onclick="showMap()">Swiss Map</button>
+<button onclick="showEdu()">Learn Mode</button>
+</div>
+<div id="gameArea">
+<canvas id="fpsCanvas" width="800" height="600"></canvas>
+<div id="map"></div>
+<div id="edu"></div>
+</div>
+
+<script>
+// --- FPS PLACEHOLDER ---
+const canvas = document.getElementById('fpsCanvas');
+const ctx = canvas.getContext('2d');
+let player = { x: 400, y: 300, color: 'cyan' };
+let bullets = [];
+
+function drawFPS() {
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle = player.color;
+ctx.beginPath();
+ctx.arc(player.x, player.y, 20, 0, Math.PI*2);
+ctx.fill();
+ctx.fillStyle = 'red';
+bullets.forEach(b=>{
+ctx.fillRect(b.x, b.y, 5, 5);
+b.x += b.vx;
+b.y += b.vy;
+});
+requestAnimationFrame(drawFPS);
+}
+drawFPS();
+
+window.addEventListener('keydown', e => {
+if(e.key === 'ArrowUp') player.y -= 10;
+if(e.key === 'ArrowDown') player.y += 10;
+if(e.key === 'ArrowLeft') player.x -= 10;
+if(e.key === 'ArrowRight') player.x += 10;
+if(e.key === ' ') bullets.push({x: player.x, y: player.y, vx: 5, vy: 0});
+});
+
+// --- MAP ---
+const cantons = [
+"Aargau", "Appenzell Ausserrhoden", "Appenzell Innerrhoden", "Basel-Landschaft", "Basel-Stadt",
+"Bern", "Fribourg", "Geneva", "Glarus", "Graubünden", "Jura", "Lucerne", "Neuchâtel", "Nidwalden",
+"Obwalden", "Schaffhausen", "Schwyz", "Solothurn", "St. Gallen", "Thurgau", "Ticino",
+"Uri", "Valais", "Vaud", "Zug", "Zürich"
+];
+
+const mapDiv = document.getElementById('map');
+cantons.forEach(canton => {
+let div = document.createElement('div');
+div.className = 'canton';
+div.textContent = canton;
+div.onclick = () => alert(`${canton}: Lore connected to Valorant world.`);
+mapDiv.appendChild(div);
+});
+
+// --- EDU ---
+const eduDiv = document.getElementById('edu');
+const topics = [
+{title:"Build a Computer", content:"Learn the parts: CPU, GPU, RAM, PSU, Storage."},
+{title:"Fix a Computer", content:"Troubleshoot issues, replace hardware, check connections."},
+{title:"Learn C++", content:"Intro to syntax, variables, loops, classes."},
+{title:"Make Your Own Game", content:"Basics of game loops, rendering, input handling."},
+{title:"Create Websites", content:"Learn HTML, CSS, JavaScript to make interactive sites."}
+];
+topics.forEach(t => {
+let sec = document.createElement('div');
+sec.className = 'edu-section';
+sec.innerHTML = `<h3>${t.title}</h3><p>${t.content}</p>`;
+eduDiv.appendChild(sec);
+});
+
+// --- Navigation ---
+function showFPS(){
+canvas.style.display = 'block';
+mapDiv.style.display = 'none';
+eduDiv.style.display = 'none';
+}
+function showMap(){
+canvas.style.display = 'none';
+mapDiv.style.display = 'block';
+eduDiv.style.display = 'none';
+}
+function showEdu(){
+canvas.style.display = 'none';
+mapDiv.style.display = 'none';
+eduDiv.style.display = 'block';
+}
+</script>
+</body>
+</html>
